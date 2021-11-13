@@ -1,6 +1,7 @@
 ## Description de l'objéctif de l'algorithme
 Le but de l'algorithme est de traiter la somme des éléments entre deux tableaux
 >Exemple
+
 **T1:** 
 |4 	|8 	|7 	|9 	|1 	|5 	|4 	|6|
 |---|---|---|---|---|---|---|-|
@@ -13,11 +14,9 @@ Le but de l'algorithme est de traiter la somme des éléments entre deux tableau
 |11 |14 |12 |11 |2 	|8 	|11 |10|
 |---|---|---|---|---|---|---|--|
 
-|4 	|8 	|7 	|9 	|1 	|5 	|4 	|6|
-|---|---|---|---|---|---|---|-|
 ## Comment fonctionne l'algorithme
 
-J'ai crée une fonction `Somme` qui accepte en entrée 2 tableaux dynamique de type réel ainsi que la taille de chacun, et en sortie on aura un tableau contenant la somme des éléments des deux tableaux mis en entrée.
+J'ai crée une fonction `Somme` qui accepte en entrée 2 tableaux dynamique de type réel ainsi que la taille de chacun, en sortie on aura un tableau contenant la somme des éléments des deux tableaux mis en entrée.
 
 - On verifie la taille de chaque tableau, si les deux sont inférieur ou égale à 0, la fonction retourne null et le résultat au test sera null.
 - Si la taille d'un des tableaux est null, T3 va contenir les éléments du tableau dont la taille est non null.
@@ -138,6 +137,7 @@ L'algorithme contient 7 boucles imbriqués dans des conditions `if..else`, des b
 - Dans un 2eme cas, si la taille d'un des tableau est supérieur ou egale à l'autre, il y'aura 2 parcours , **m** et **n**
    * Si m=n alors le nombre d'intstruction est égale à **2m** ou **2n**
    * Si m>n ou n>m alors le nombre d'intstruction est égale à **m+n**
+   
 Donc la complexité de cette algorithme est égale à **o(max(m,n)**)
 ### Expérimentation (test unitaires?)
 ## Conclusion
