@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 
-float* Somme2(float* T1, float* T2, int size_T1, int size_T2) {
+float* Somme(float* T1, float* T2, int size_T1, int size_T2) {
 
     // Check if the size of the arrays is 0
     if(size_T2<=0 && size_T1<=0) {
@@ -85,7 +85,7 @@ int main() {
     }
 
     // Testing
-    float* T3 = Somme2(T1, T2, size_T1, size_T2);
+    float* T3 = Somme(T1, T2, size_T1, size_T2);
     printf("The result is:\n");
     if (T3==NULL) {
        printf("NULL\n");
