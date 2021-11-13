@@ -1,4 +1,5 @@
 ## Description de l'objéctif de l'algorithme
+|4 	|8 	|7 	|9 	|1 	|5 	|4 	|6|
 ## Comment fonctionne l'algorithme
 ### pseudo code
 
