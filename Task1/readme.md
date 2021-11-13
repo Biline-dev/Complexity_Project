@@ -1,5 +1,4 @@
 ## Description de l'objéctif de l'algorithme
-<<<<<<< HEAD
 Le but de l'algorithme est de traiter la somme des éléments entre deux tableaux
 >Exemple
 **T1:** 
@@ -14,10 +13,8 @@ Le but de l'algorithme est de traiter la somme des éléments entre deux tableau
 |11 |14 |12 |11 |2 	|8 	|11 |10|
 |---|---|---|---|---|---|---|--|
 
-=======
 |4 	|8 	|7 	|9 	|1 	|5 	|4 	|6|
 |---|---|---|---|---|---|---|-|
->>>>>>> 6474d4b2940c5751e26c81209520ecd581847f2d
 ## Comment fonctionne l'algorithme
 
 J'ai crée une fonction `Somme` qui accepte en entrée 2 tableaux dynamique de type réel ainsi que la taille de chacun, et en sortie on aura un tableau contenant la somme des éléments des deux tableaux mis en entrée.
