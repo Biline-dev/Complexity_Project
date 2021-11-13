@@ -1,6 +1,6 @@
-** Description de l'objéctif de l'algorithme
-** Comment fonctionne l'algorithme
-*** pseudo code
+**Description de l'objéctif de l'algorithme
+**Comment fonctionne l'algorithme
+***pseudo code
 ```
 Procédure Somme_tebleau(E/ T1[], T2[] : tableau de réel, size_T1, size_T2: entiers, S/T3[]: tableau de réel)
 debut
@@ -105,8 +105,8 @@ Début
     Fsi;
 
 ```
-** Le calcul détaillé de la complexité théorique temporelle et spatiale.
-*** Expérimentation
-** Conclusion
+**Le calcul détaillé de la complexité théorique temporelle et spatiale.
+***Expérimentation (test unitaires?)
+**Conclusion
 
 
