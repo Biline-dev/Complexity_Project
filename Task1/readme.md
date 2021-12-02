@@ -21,7 +21,7 @@ J'ai crée une fonction `Somme` qui accepte en entrée 2 tableaux dynamique de t
 - On verifie la taille de chaque tableau, si les deux sont inférieur ou égale à 0, la fonction retourne null et le résultat au test sera null.
 - Si la taille d'un des tableaux est null, T3 va contenir les éléments du tableau dont la taille est non null.
 - Si les deux tailles sont non nulles et egale on fait un parcours mutuelle des deux tableaux.
--sinon si la taille d'un des tableau est inférieur à l'autre, on parcours les deux tableau mutuellement jusqu'à la plus fin du tableau avec la plus petite taille en sommant les éléments, à partir de cette taille on entre dans une autre boucle en séquentiel pour finir le tableau avec la plus grande taille.
+- Sinon si la taille d'un des tableau est inférieur à l'autre, on parcours les deux tableaux mutuellement jusqu'à la fin du tableau avec la plus petite taille en sommant les éléments, à partir de cette taille on entre dans une autre boucle en séquentiel pour finir le tableau avec la plus grande taille.
 - En testant, nous aurons besoin de d'autres boucles pour afficher les différent éléments de T3.
 
 ### pseudo code
@@ -85,7 +85,7 @@ fin
 
 Algorithme Test_Somme_Tableau;
 var size_T1, size_T2, i : entiers;
-    T1[], T2[], T3[]: tableau de reels;
+    T1[], T2[], T3[]: tableau de entiers;
 
 Début
 
@@ -133,10 +133,10 @@ Début
 ## Le calcul détaillé de la complexité théorique temporelle et spatiale
 
 L'algorithme contient 7 boucles imbriqués dans des conditions `if..else`, des boucles en dehors de celle utilisé dans la partie `Test`. La compléxité de l'algorithme va dépendre des éléments mis en entrée.
-- Dans un 1er cas, si la taille d'un des tableau est null, il y'aura qu'un seul parcour d'un des tableaux, **m** ou **n **
-- Dans un 2eme cas, si la taille d'un des tableau est supérieur ou egale à l'autre, il y'aura 2 parcours , **m** et **n**
-   * Si m=n alors le nombre d'intstruction est égale à **2m** ou **2n**
-   * Si m>n ou n>m alors le nombre d'intstruction est égale à **m+n**
+- Dans un 1er cas, si la taille d'un des tableaux est null, il y'aura qu'un seul parcour d'un des tableaux, **m** ou **n**
+- Dans un 2eme cas, si la taille d'un des tableaux est supérieur ou egale à l'autre, il y'aura 2 parcours , **m** et **n**
+   * Si m=n alors le nombre d'intstructions est égale à **2m** ou **2n**
+   * Si m>n ou n>m alors le nombre d'intstructions est égale à **m+n**
    
 Donc la complexité de cette algorithme est égale à **o(max(m,n)**)
 ### Expérimentation
