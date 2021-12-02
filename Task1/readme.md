@@ -139,7 +139,11 @@ L'algorithme contient 7 boucles imbriqués dans des conditions `if..else`, des b
    * Si m>n ou n>m alors le nombre d'intstruction est égale à **m+n**
    
 Donc la complexité de cette algorithme est égale à **o(max(m,n)**)
-### Expérimentation (test unitaires?)
+### Expérimentation
+![test](https://www.pixenli.com/image/mbqYaD3N)
+## Graphe
+![graph](https://www.pixenli.com/image/OfH2fP2V)
+
 ## Conclusion
 
 
