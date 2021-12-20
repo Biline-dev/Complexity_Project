@@ -10,14 +10,14 @@ int* Somme(int* T1, int* T2, int size_T1, int size_T2) {
         return NULL;
     }
     // If one of the arrays is empty, return the other one
-    if (size_T1==0 && size_T2!=0) {
+    if (size_T1==0 && size_T2>0) {
         int* T3 = (int*)malloc(size_T2*sizeof(int));
         for (int i=0; i<size_T2; i++) {
             T3[i] = T2[i];
         }
         return T3;
     }
-    if (size_T1!=0 && size_T2==0) {
+    if (size_T1>0 && size_T2==0) {
         int* T3 = (int*)malloc(size_T1*sizeof(int));
         for (int i=0; i<size_T1; i++) {
             T3[i] = T1[i];
@@ -57,13 +57,14 @@ int* Somme(int* T1, int* T2, int size_T1, int size_T2) {
 
 }
 
+
 int main() {
     // Test 
     struct timespec start, end;
     int size_T1;
     int size_T2;
     int nombreMystere = 0, nombreEntre = 0;
-    const int MAX1 = 1, MAX2=50, MIN1 = 1, MIN2=0;
+    const int MAX1 = 100000, MAX2=50, MIN1 = 1, MIN2=0;
 
     // Generate random numbers
     srand(time(NULL));
