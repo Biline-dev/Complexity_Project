@@ -50,6 +50,9 @@ typedef struct formula{
 }formula;
 
 
+int total_number_of_branches = 0;
+
+
 void print_clauses_value(formula F)
 {
   for(int index = 0;index < F.number_of_clauses; index ++)
@@ -89,6 +92,16 @@ int str_to_num(char * string)
   return number*negative;
 }
 
+void output_model(model M)
+{
+  FILE *output = fopen("model.txt","w");
+  fprintf(output, "%d\n",M.number_of_atoms );
+  for(int index = 1; index < M.number_of_atoms+1; index++)
+  {
+    fprintf(output, "%d\n", M.atoms_table[index]);
+  }
+  fclose(output);
+}
 
 formula read_formula(char * s)
 {
@@ -214,7 +227,7 @@ int random_atom(model M)
     index++;
     if(index > (M.number_of_atoms)*2)
     {
-      printf("Help step-bro Im stuck\n");
+      printf("stuck in infinte loop when generating a random atom\n");
       exit(1);
     }
     if(ran+1 > M.number_of_atoms)
@@ -245,11 +258,11 @@ void push_change(int type_of_change,int name,int value, change **changes)
   new_change->type_of_change = type_of_change;
   if(type_of_change == ATOM_CHANGE)
   {
-    printf("atom change %d = %d\n",name,value);
+    // printf("atom change %d = %d\n",name,value);
     new_change->atom = name;
   }
   else{
-    printf("clause change %d = %d\n",name,value);
+    // printf("clause change %d = %d\n",name,value);
     new_change->clause_id = name;
   }
 
@@ -286,11 +299,11 @@ void pop_changes(formula * F,change * changes,model *M)
   {
     if(changes->type_of_change == ATOM_CHANGE)
     {
-      printf("undo atom %d\n",changes->atom);
+      // printf("undo atom %d\n",changes->atom);
       undo_atom_change(F,M,changes->atom);
     }
     else{
-      printf("undo clause %d\n",changes->clause_id);
+      // printf("undo clause %d\n",changes->clause_id);
       undo_clause_change(F,changes->clause_id);
     }
     changes = changes->next_change;
@@ -319,8 +332,6 @@ void assign_atom_value(formula* F,change ** changes,model *M,int atom,int atom_v
           assigned_value = FALSE;
         }
         F->table_clauses[index].table_literals[jindex].value = assigned_value;
-        // we push the change in the stack
-        //Im spliting the change to the model in 2 places need to find a fix
         atom_found = TRUE;
       }
     }
@@ -361,7 +372,7 @@ int dpll(formula * F,model * M,int atom,int value)
 {
 
   change * changes = NULL;
-  printf("value %d = %d\n",atom,value);
+  // printf("value %d = %d\n",atom,value);
   M->number_of_undefined_atoms--;
   if(M->atoms_table[atom] == 0)
   {
@@ -378,7 +389,7 @@ int dpll(formula * F,model * M,int atom,int value)
   //   exit(1);
   // }
   assign_atom_value(F,&changes,M,atom,value);
-  print_model(*M);
+  // print_model(*M);
 
   int formula_value = check_formula_value(*F);
   if(formula_value == TRUE)
@@ -387,6 +398,8 @@ int dpll(formula * F,model * M,int atom,int value)
   }
   else if(formula_value == FALSE)
   {
+    // total_number_of_branches++;
+    output_model(*M);
     pop_changes(F,changes,M);
     return FALSE;
   }
@@ -395,6 +408,9 @@ int dpll(formula * F,model * M,int atom,int value)
   if(randomed_atom == -1)
   {
     // printf("not enough atoms\n");
+    // print_model(*M);
+    // print_clauses_value(*F);
+    // total_number_of_branches++;
     pop_changes(F,changes,M);
     return FALSE;
   }
@@ -408,17 +424,6 @@ int dpll(formula * F,model * M,int atom,int value)
   {
     pop_changes(F,changes,M);
     return FALSE;
-  }
-}
-
-
-void output_model(model M)
-{
-  FILE *output = fopen("model.txt","w");
-  fprintf(output, "%d\n",M.number_of_atoms );
-  for(int index = 1; index < M.number_of_atoms+1; index++)
-  {
-    fprintf(output, "%d\n", M.atoms_table[index]);
   }
 }
 
@@ -440,6 +445,7 @@ void main()
   if(((dpll(&F,&M,randomed_atom,-1) == TRUE) || (dpll(&F,&M,randomed_atom,1) == TRUE)))
   {
     printf("the formula has %d clauses and is satisfiable",F.number_of_clauses);
+    output_model(M);
   }
   else{
     printf("the formula has %d clauses and is NOT satisfiable",F.number_of_clauses);
@@ -450,7 +456,6 @@ void main()
   printf(", execution time = %f\n",time_spent);
 
   // print_model(M);
-  output_model(M);
   // print_clauses_value(F);
 
 }
