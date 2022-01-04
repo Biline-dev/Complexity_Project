@@ -89,16 +89,6 @@ void print_formula(formula F)
   }
 }
 
-void print_purity(purity * purity_table, int size)
-{
-  printf("purity table: ");
-  for(int index = 1; index < size+1; index++)
-  {
-    printf("%d = %d, ",index,purity_table[index].purity_value);
-  }
-  printf("\n");
-}
-
 int str_to_num(char * string)
 {
   int number = 0;
@@ -170,47 +160,29 @@ formula read_formula(char * s)
    return F;
 }
 
-int assign_purity_value(purity * purity_table, int atom)
-{
-  if((purity_table[atom].positive_clauses != NULL) && (purity_table[atom].negative_clauses != NULL))
-  {
-    return NOT_PURE;
-  }
-  return PURE;
-}
-
-purity * init_purity(formula F,int size)
-{
-  purity * purity_table = malloc(sizeof(purity)*(size+1));
-  for(int index = 0;index < size+1;index++)
-  {
-    purity_table[index].purity_value = PURE;
-    purity_table[index].positive_clauses = NULL;
-    purity_table[index].negative_clauses = NULL;
-  }
-  for(int index =0; index < F.number_of_clauses; index++)
-  {
-    for(int jindex = 0; ((jindex < F.table_clauses[index].number_of_literals)); jindex++)
-    {
-      clause_pointer * p_clause = malloc(sizeof(clause_pointer));
-      p_clause->clause_id = index;
-      int current_atom = abs(F.table_clauses[index].table_literals[jindex].atom);
-      if(F.table_clauses[index].table_literals[jindex].atom > 0)
-      {
-        p_clause->next_clause = purity_table[current_atom].positive_clauses;
-        purity_table[current_atom].positive_clauses = p_clause;
-      }
-      else{
-        p_clause->next_clause = purity_table[current_atom].negative_clauses;
-        purity_table[current_atom].negative_clauses = p_clause;
-      }
-      purity_table[current_atom].purity_value = assign_purity_value(purity_table,current_atom);
-      // printf("atom %d = %d, negative pointer %d, positive pointer %d\n",current_atom,purity_table[current_atom].purity_value,purity_table[current_atom].negative_clauses,purity_table[current_atom].positive_clauses);
-    }
-  }
-  // print_purity(purity_table,size);
-  return purity_table;
-}
+// purity init_purity(formula F,int size)
+// {
+//   purity * purity_table = malloc(sizeof(purity)*(size+1));
+//   for(int index = 0;index < size+1;index++)
+//   {
+//     purity_table[index].purity_value = PURE;
+//     purity_table[index].positive_clauses = NULL;
+//     purity_table[index].negative_clauses = NULL;
+//   }
+//   for(int index =0; index < F->number_of_clauses; index++)
+//   {
+//     for(int jindex = 0; ((jindex < F->table_clauses[index].number_of_literals)); jindex++)// only if the clause if UNDEFINED
+//     {
+//       clause_pointer * p_clause = malloc(sizeof(clause_pointer));
+//       p_clause->clause_id = index;
+//       if(F->table_clauses[index].table_literals[jindex].atom > 0)
+//       {
+//         p_clause->next_clause = purity_table[abs(F->table_clauses[index].table_literals[jindex].atom)].positive_clauses;
+//         purity_table[abs(F->table_clauses[index].table_literals[jindex].atom)].positive_clauses = p_clause->next_clause;
+//       }
+//     }
+//   }
+// }
 
 model init_model(int size)
 {
@@ -318,75 +290,6 @@ int random_value()
   }
 }
 
-void update_purity(formula F,purity * purity_table,int clause_id)
-{
-  int atom;
-  clause_pointer * to_be_freeed;
-  int changes_done;
-  for(int index = 0 ; index < F.table_clauses[clause_id].number_of_literals; index++)
-  {
-    changes_done = FALSE;
-    atom = abs(F.table_clauses[clause_id].table_literals[index].atom);
-    clause_pointer *p_clause = purity_table[atom].negative_clauses;
-    while(p_clause != NULL)
-    {
-      if(p_clause->clause_id == clause_id)
-      {
-        to_be_freeed = p_clause;
-        p_clause = p_clause->next_clause;
-        changes_done = TRUE;
-        free(to_be_freeed);
-      }else{
-        break;
-      }
-    }
-    purity_table[atom].negative_clauses = p_clause;
-    while(p_clause != NULL && p_clause->next_clause != NULL)
-    {
-      if(p_clause->next_clause->clause_id == clause_id)
-      {
-        changes_done = TRUE;
-        to_be_freeed = (p_clause->next_clause);
-        p_clause->next_clause = (p_clause->next_clause)->next_clause;
-        free(to_be_freeed);
-      }else{
-        p_clause = p_clause->next_clause;
-      }
-    }
-    p_clause = purity_table[atom].positive_clauses;
-    while(p_clause != NULL)
-    {
-      if(p_clause->clause_id == clause_id)
-      {
-        changes_done = TRUE;
-        to_be_freeed = p_clause;
-        p_clause = p_clause->next_clause;
-        free(to_be_freeed);
-      }else{
-        break;
-      }
-    }
-    purity_table[atom].positive_clauses = p_clause;
-    while(p_clause != NULL && p_clause->next_clause != NULL)
-    {
-      if(p_clause->next_clause->clause_id == clause_id)
-      {
-        changes_done = TRUE;
-        to_be_freeed = (p_clause->next_clause);
-        p_clause->next_clause = (p_clause->next_clause)->next_clause;
-        free(to_be_freeed);
-      }else{
-        p_clause = p_clause->next_clause;
-      }
-    }
-    if( changes_done == TRUE)
-    {
-      purity_table[atom].purity_value = assign_purity_value(purity_table,atom);
-      // printf("clause change %d, atom %d = %d\n",clause_id,atom,purity_table[atom].purity_value);
-    }
-  }
-}
-
 void push_change(int type_of_change,int name,int value, change **changes)
 {
   change * new_change = malloc(sizeof(change));
@@ -431,30 +334,12 @@ void undo_atom_change(formula * F,model * M,int atom)
   // printf("plus: %d\n",M->number_of_undefined_atoms);
 }
 
-void undo_clause_change(formula * F,purity * purity_table, int clause_id)
+void undo_clause_change(formula * F, int clause_id)
 {
   F->table_clauses[clause_id].value = UNDEFINED;
-
-  int atom;
-  for(int index = 0; index < F->table_clauses[clause_id].number_of_literals;index++)
-  {
-    atom = F->table_clauses[clause_id].table_literals[index].atom;
-    clause_pointer * p_clause = malloc(sizeof(clause_pointer));
-    p_clause->clause_id = clause_id;
-    if(atom > 0)
-    {
-      p_clause->next_clause = purity_table[abs(atom)].positive_clauses;
-      purity_table[abs(atom)].positive_clauses = p_clause;
-    }
-    else{
-      p_clause->next_clause = purity_table[abs(atom)].negative_clauses;
-      purity_table[abs(atom)].negative_clauses = p_clause;
-    }
-    purity_table[abs(atom)].purity_value = assign_purity_value(purity_table,abs(atom));
-  }
 }
 
-void pop_changes(formula * F,change * changes,model *M,purity * purity_table)
+void pop_changes(formula * F,change * changes,model *M)
 {
   while(changes != NULL)
   {
@@ -465,14 +350,13 @@ void pop_changes(formula * F,change * changes,model *M,purity * purity_table)
     }
     else{
       // printf("undo clause %d\n",changes->clause_id);
-      undo_clause_change(F,purity_table,changes->clause_id);
+      undo_clause_change(F,changes->clause_id);
     }
     changes = changes->next_change;
   }
 }
 
-//improvement possible here by returning if the assignement resulted in a FALSE clause
-void assign_atom_value(formula* F,change ** changes,purity * purity_table,model *M,int atom,int atom_value)
+void assign_atom_value(formula* F,change ** changes,model *M,int atom,int atom_value)
 {
   //for each clause in the formula
   for(int index =0; index < F->number_of_clauses; index++)
@@ -513,12 +397,10 @@ void assign_atom_value(formula* F,change ** changes,purity * purity_table,model 
       if(clause_value == TRUE)
       {
         F->table_clauses[index].value = TRUE;
-        update_purity(*F,purity_table,index);
       }
       else if(clause_value == FALSE)
       {
         F->table_clauses[index].value = FALSE;
-        update_purity(*F,purity_table,index);
         return; // the one clause if FALSE we return;
       }
     }
@@ -560,34 +442,11 @@ int check_for_unit_clause(formula F,model M)
   return 0;
 }
 
-int check_for_pure_literals(purity * purity_table,int size,model M)
-{
-  for(int index = 1; index < size+1;index++)
-  {
-    if(purity_table[index].purity_value == PURE && M.atoms_table[index] == UNDEFINED)
-    {
-      if(purity_table[index].positive_clauses != NULL)
-      {
-        return index;
-      }
-      else{
-        return index*-1;
-      }
-    }
-  }
-  return 0;
-}
-
-
-
-//if you add pop_changes to the true return you will see that the model doesnt pop the very first atom change WHY??
-int dpll(formula * F,model * M,purity * purity_table,int atom,int value)
+int dpll(formula * F,model * M,int atom,int value)
 {
 
   change * changes = NULL;
   int formula_value;
-  int pure_literal;
-  int unit_clause;
   // printf("atom %d = %d\n",atom,value);
   M->number_of_undefined_atoms--;
   if(M->atoms_table[atom] == 0)
@@ -599,92 +458,59 @@ int dpll(formula * F,model * M,purity * purity_table,int atom,int value)
     printf("trying to assign an already assigned atom\n");
     exit(1);
   }
-  assign_atom_value(F,&changes,purity_table,M,atom,value);
-  do{
-    unit_clause = check_for_unit_clause(*F,*M); // can be negative carefull
-    while(unit_clause != 0)
+  assign_atom_value(F,&changes,M,atom,value);
+  int unit_clause = check_for_unit_clause(*F,*M); // can be negative carefull
+  while(unit_clause != 0)
+  {
+    if(unit_clause < 0)
     {
-      if(unit_clause < 0)
-      {
-        value = -1;
-      }
-      else{
-        value = 1;
-      }
-
-      M->number_of_undefined_atoms--;
-      if(M->atoms_table[abs(unit_clause)] == 0)
-      {
-        M->atoms_table[abs(unit_clause)] = value;
-        push_change(ATOM_CHANGE,abs(unit_clause),value,&changes);
-      }
-      else{
-        print_model(*M);
-        printf("unit clause section: trying to assign an already assigned atom.\n");
-        exit(1);
-      }
-      assign_atom_value(F,&changes,purity_table,M,abs(unit_clause),value);
-      unit_clause = check_for_unit_clause(*F,*M);
-      // printf("in model: %d = %d\n",abs(unit_clause),M->atoms_table[abs(unit_clause)]);
+      value = -1;
+    }
+    else{
+      value = 1;
     }
 
-    pure_literal = check_for_pure_literals(purity_table,F->max_atom_name,*M);
-    if(pure_literal != 0)
+    M->number_of_undefined_atoms--;
+    if(M->atoms_table[abs(unit_clause)] == 0)
     {
-      if(pure_literal < 0)
-      {
-        value = -1;
-      }
-      else{
-        value = 1;
-      }
-      M->number_of_undefined_atoms--;
-      if(M->atoms_table[abs(pure_literal)] == 0)
-      {
-        M->atoms_table[abs(pure_literal)] = value;
-        push_change(ATOM_CHANGE,abs(pure_literal),value,&changes);
-      }
-      else{
-        print_model(*M);
-        printf("pure literal section: trying to assign an already assigned atom.\n");
-        exit(1);
-      }
-      assign_atom_value(F,&changes,purity_table,M,abs(pure_literal),value);
+      M->atoms_table[abs(unit_clause)] = value;
+      push_change(ATOM_CHANGE,abs(unit_clause),value,&changes);
     }
-
-    pure_literal = check_for_pure_literals(purity_table,F->max_atom_name,*M);
+    else{
+      print_model(*M);
+      printf("unit clause section: trying to assign an already assigned atom.\n");
+      exit(1);
+    }
+    assign_atom_value(F,&changes,M,abs(unit_clause),value);
     unit_clause = check_for_unit_clause(*F,*M);
-  }while(pure_literal != 0 || unit_clause != 0);
+    // printf("in model: %d = %d\n",abs(unit_clause),M->atoms_table[abs(unit_clause)]);
+  }
 
-
-  // print_model(*M);
-  // print_purity(purity_table,F->max_atom_name);
   formula_value = check_formula_value(*F);
   if(formula_value == TRUE)
   {
-    // pop_changes(F,changes,M,purity_table);
     return TRUE;
   }
   else if(formula_value == FALSE)
   {
     output_model(*M);
-    pop_changes(F,changes,M,purity_table);
+    pop_changes(F,changes,M);
     return FALSE;
   }
 
   int randomed_atom = random_atom(*M);
   if(randomed_atom == -1)
   {
-    pop_changes(F,changes,M,purity_table);
+    pop_changes(F,changes,M);
     return FALSE;
   }
 
-  if((dpll(F,M,purity_table,randomed_atom,-1) == TRUE) || (dpll(F,M,purity_table,randomed_atom,1) == TRUE))
+  if((dpll(F,M,randomed_atom,-1) == TRUE) || (dpll(F,M,randomed_atom,1) == TRUE))
   {
     return TRUE;
   }else
   {
-    pop_changes(F,changes,M,purity_table);
+    pop_changes(F,changes,M);
     return FALSE;
   }
 }
@@ -693,7 +519,6 @@ void main()
 {
   formula F = read_formula("formula.txt");
   model M = init_model(F.max_atom_name);
-  purity * purity_table = init_purity(F,F.max_atom_name);
   // print_formula(F);
 
 
@@ -705,21 +530,18 @@ void main()
   double time_spent;
 
   begin = clock();
-  if(((dpll(&F,&M,purity_table,randomed_atom,-1) == TRUE) || (dpll(&F,&M,purity_table,randomed_atom,1) == TRUE)))
+  if(((dpll(&F,&M,randomed_atom,-1) == TRUE) || (dpll(&F,&M,randomed_atom,1) == TRUE)))
   {
-    printf("DPLL the formula has %d clauses and is satisfiable",F.number_of_clauses);
+    printf("partial DPLL the formula has %d clauses and is satisfiable",F.number_of_clauses);
     output_model(M);
   }
   else{
-    printf("DPLL the formula has %d clauses and is NOT satisfiable",F.number_of_clauses);
+    printf("partial DPLL the formula has %d clauses and is NOT satisfiable",F.number_of_clauses);
   }
   end = clock();
   time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
   total_time+= time_spent;
   printf(", execution time = %f\n",time_spent);
-
-  // print_purity(purity_table,F.max_atom_name);
-  // print_model(M);
 
   // print_model(M);
   // print_clauses_value(F);
